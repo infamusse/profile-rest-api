@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, viewsets
 
 from profiles_api import serializers
 
@@ -48,3 +48,50 @@ class HelloApiView(APIView):
     def delete(self, request, pk=None):
         # Handle del an obj
         return Response({'method': 'DELETE'})
+
+
+class HelloViewSet(viewsets.ViewSet):
+    # Test Viewset
+
+    serializer_class = serializers.HelloSerializer
+
+    def list(self, request):
+        # Return hello message
+
+        a_viewset = [
+            'Provides more funcionality with less code',
+            'Automaticly maps to URLs using Routes'
+        ]
+
+        return Response({'message': 'Hello', 'a_viewset': a_viewset})
+
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        print('request', request.data)
+
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message = f'Hello {name}'
+            return Response({'message': message})
+        else:
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    def retrive(self, request, pk=None):
+        # Handle getting obj by ID
+        return Response({'http_method': 'GET'})
+
+    def update(self, request, pk=None):
+        # Handle udpt obj
+        return Response({'http_method': 'PUT'})
+
+    def partial_update(self, request, pk=None):
+        # Handle updt partt obj by ID
+        return Response({'http_method': 'PATCH'})
+
+    def destroy(self, request, pk=None):
+        # Handle rmv
+        return Response({'http_method': 'DELETE'})
